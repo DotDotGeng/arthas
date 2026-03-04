@@ -12,6 +12,10 @@
     <artifactId>arthas-vmtool</artifactId>
     <name>arthas-vmtool</name>
     <url>https://github.com/alibaba/arthas</url>
+    <properties>
+        <JAVA_8_HOME>/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home</JAVA_8_HOME>
+        <os_name>darwin</os_name>
+    </properties>
 
     <profiles>
         <!-- https://github.com/openjdk/jdk/blob/jdk-16%2B36/src/java.base/windows/native/libjava/java_props_md.c#L568 -->
@@ -119,15 +123,17 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>1.0-alpha-11</version>
+                        <version>1.0.0</version>
                         <extensions>true</extensions>
                         <configuration>
+<!--                            <javahPath>${JAVA_8_HOME}/bin/javah</javahPath>-->
                             <javahIncludes>
                                 <javahInclude>
                                     <className>arthas.VmTool</className>
                                 </javahInclude>
                             </javahIncludes>
                             <javahOS>${os_name}</javahOS>
+                            <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
                             <sources>
                                 <source>
                                     <directory>src/main/native/src</directory>
@@ -140,8 +146,8 @@
                             <compilerProvider>generic-classic</compilerProvider>
                             <compilerExecutable>g++</compilerExecutable>
                             <compilerStartOptions>
-                                <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
-                                <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                                <compilerStartOption>-I${JAVA_8_HOME}/include</compilerStartOption>
+                                <compilerStartOption>-I${JAVA_8_HOME}/include/${os_name}</compilerStartOption>
                                 <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                                 <compilerStartOption>${os_arch_option}</compilerStartOption>
                                 <compilerStartOption>-fpic</compilerStartOption>
@@ -164,7 +170,19 @@
                                 <linkerEndOption>-o ${project.build.directory}/${lib_name}</linkerEndOption>
                             </linkerEndOptions>
                         </configuration>
+
                         <executions>
+<!--                            arthas源码构建-->
+<!--                            <execution>-->
+<!--                                <id>javah</id>-->
+<!--                                <phase>compile</phase>-->
+<!--                                <goals>-->
+<!--                                    <goal>javah</goal>-->
+<!--                                    <goal>initialize</goal>-->
+<!--                                    <goal>compile</goal>-->
+<!--                                    <goal>link</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
                             <execution>
                                 <id>compile-and-link</id>
                                 <phase>compile</phase>
@@ -205,14 +223,16 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>native-maven-plugin</artifactId>
-                <version>1.0-alpha-11</version>
+                <version>1.0.0</version>
                 <extensions>true</extensions>
                 <configuration>
+<!--                    <javahPath>${JAVA_8_HOME}/bin/javah</javahPath>-->
                     <javahIncludes>
                         <javahInclude>
                             <className>arthas.VmTool</className>
                         </javahInclude>
                     </javahIncludes>
+                    <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
                     <sources>
                         <source>
                             <directory>src/main/native/src</directory>
@@ -225,8 +245,8 @@
                     <compilerProvider>generic-classic</compilerProvider>
                     <compilerExecutable>g++</compilerExecutable>
                     <compilerStartOptions>
-                        <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
-                        <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                        <compilerStartOption>-I${JAVA_8_HOME}/include</compilerStartOption>
+                        <compilerStartOption>-I${JAVA_8_HOME}/include/${os_name}</compilerStartOption>
                         <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                         <compilerStartOption>${os_arch_option}</compilerStartOption>
                         <compilerStartOption>-fpic</compilerStartOption>
@@ -247,6 +267,16 @@
                     </linkerEndOptions>
                 </configuration>
                 <executions>
+<!--                    <execution>-->
+<!--                        <id>javah</id>-->
+<!--                        <phase>compile</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>javah</goal>-->
+<!--                            <goal>initialize</goal>-->
+<!--                            <goal>compile</goal>-->
+<!--                            <goal>link</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
                     <execution>
                         <id>compile-and-link</id>
                         <phase>compile</phase>

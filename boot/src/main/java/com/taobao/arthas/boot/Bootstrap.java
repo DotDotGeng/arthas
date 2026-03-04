@@ -333,13 +333,13 @@ public class Bootstrap {
             // ignore
         }
 
-        Bootstrap bootstrap = new Bootstrap();
+        Bootstrap bootstrap = new Bootstrap();//创建启动器
 
         CLI cli = CLIConfigurator.define(Bootstrap.class);
-        CommandLine commandLine = cli.parse(Arrays.asList(args));
+        CommandLine commandLine = cli.parse(Arrays.asList(args));// 将命令行列参数进行解析，获取命令行对象
 
         try {
-            CLIConfigurator.inject(commandLine, bootstrap);
+            CLIConfigurator.inject(commandLine, bootstrap);//通过反射的方式将命令行类注册到启动类中
         } catch (Throwable e) {
             e.printStackTrace();
             System.out.println(usage(cli));
@@ -394,7 +394,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
-                pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid, bootstrap.getSelect());
+                pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid, bootstrap.getSelect()); // 找出所有java进程，并让用户输入想要观测的java进程
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
                 System.exit(1);
@@ -405,7 +405,7 @@ public class Bootstrap {
             }
         }
 
-        checkTelnetPortPid(bootstrap, telnetPortPid, pid);
+        checkTelnetPortPid(bootstrap, telnetPortPid, pid);// 一旦有人通过此服务attach过一个进程，就必须通过stop之前的进程，再attach
 
         if (httpPortPid > 0 && pid != httpPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
@@ -416,13 +416,13 @@ public class Bootstrap {
             System.exit(1);
         }
 
-        // find arthas home
+        // 寻找arthas主目录
         File arthasHomeDir = null;
         if (bootstrap.getArthasHome() != null) {
             verifyArthasHome(bootstrap.getArthasHome());
             arthasHomeDir = new File(bootstrap.getArthasHome());
         }
-        if (arthasHomeDir == null && bootstrap.getUseVersion() != null) {
+        if (arthasHomeDir == null && bootstrap.getUseVersion() != null) { // 默认不传use-version必然不满足此if
             // try to find from ~/.arthas/lib
             File specialVersionDir = new File(System.getProperty("user.home"), ".arthas" + File.separator + "lib"
                             + File.separator + bootstrap.getUseVersion() + File.separator + "arthas");
@@ -442,9 +442,9 @@ public class Bootstrap {
                 try {
                     // https://stackoverflow.com/a/17870390
                     File bootJarPath = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
-                    verifyArthasHome(bootJarPath.getParent());
+                    verifyArthasHome(bootJarPath.getParent());// 必须存在arthas-core.jar arthas-agent.jar arthas-spy.jar
                     arthasHomeDir = bootJarPath.getParentFile();
-                } catch (Throwable e) {
+                } catch (Throwable e) {// 抛异常直接忽略，你没有我帮你下载呗
                     // ignore
                 }
 
@@ -508,21 +508,21 @@ public class Bootstrap {
             arthasHomeDir = new File(ARTHAS_LIB_DIR, localLastestVersion + File.separator + "arthas");
         }
 
-        verifyArthasHome(arthasHomeDir.getAbsolutePath());
+        verifyArthasHome(arthasHomeDir.getAbsolutePath());// 输出目前arthas主目录路径
 
         AnsiLog.info("arthas home: " + arthasHomeDir);
 
-        if (telnetPortPid > 0 && pid == telnetPortPid) {
+        if (telnetPortPid > 0 && pid == telnetPortPid) {// 第一次进来一般都还没attach到任何java进程，忽略
             AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPortOrDefault());
         } else {
-            //double check telnet port and pid before attach
+            // 再次检测是否已经attach
             telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPortOrDefault());
             checkTelnetPortPid(bootstrap, telnetPortPid, pid);
             if (telnetPortPid > 0 && pid == telnetPortPid) {
                 AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPortOrDefault());
             } else {
 
-                // start arthas-core.jar
+                // 启动 arthas-core.jar 负责真正的attach操作，底下的add操作全部是执行命令需要的字符串
                 List<String> attachArgs = new ArrayList<String>();
                 attachArgs.add("-jar");
                 attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());

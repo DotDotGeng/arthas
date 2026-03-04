@@ -19,7 +19,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <yarn.registry.url>https://registry.npmmirror.com/</yarn.registry.url>
-        <yarn.download.url>http://npmmirror.com</yarn.download.url>
+        <yarn.download.url>https://mirrors.huaweicloud.com/yarn/</yarn.download.url>
         <node.download.url>https://npmmirror.com/mirrors/node/</node.download.url>
         <node.version>v16.16.0</node.version>
         <yarn.version>v1.22.19</yarn.version>
@@ -66,7 +66,7 @@
                                 "install", so unless you need to run some other yarn command,
                                 you can remove this whole <configuration> section.
                                 -->
-                            <arguments>install</arguments>
+                            <arguments>install --network-timeout 600000</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -94,6 +94,7 @@
 
                     <!-- optional: where to download node from. Defaults to https://nodejs.org/dist/ -->
                     <nodeDownloadRoot>${node.download.url}</nodeDownloadRoot>
+                    <yarnDownloadRoot>${yarn.download.url}</yarnDownloadRoot>
                     <!-- optional: where to download yarn from. Defaults to https://github.com/yarnpkg/yarn/releases/download/ -->
                     <!--                        <yarnDownloadRoot>${yarn.registry.url}</yarnDownloadRoot>-->
                     <workingDirectory>arthasWebConsole</workingDirectory>
