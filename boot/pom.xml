@@ -69,6 +69,40 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-core-jars-with-rename</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- 复制 core shade jar 并重命名为 arthas-core.jar -->
+                                <copy file="${project.basedir}/../core/target/arthas-core-shade.jar"
+                                      tofile="${project.build.directory}/arthas-core.jar"
+                                      overwrite="true" failonerror="false" />
+                                <!-- 复制 agent shade jar 并重命名为 arthas-agent.jar -->
+                                <copy file="${project.basedir}/../agent/target/arthas-agent-jar-with-dependencies.jar"
+                                      tofile="${project.build.directory}/arthas-agent.jar"
+                                      overwrite="true" failonerror="false" />
+                                <!-- 复制 client shade jar 并重命名为 arthas-client.jar -->
+                                <copy file="${project.basedir}/../client/target/arthas-client-jar-with-dependencies.jar"
+                                      tofile="${project.build.directory}/arthas-client.jar"
+                                      overwrite="true" failonerror="false" />
+                                <!-- 复制 spy jar 并重命名为 arthas-spy.jar（如果原文件名就是 arthas-spy.jar 则无需重命名，但为了统一也做一次复制） -->
+                                <copy file="${project.basedir}/../spy/target/arthas-spy.jar"
+                                      tofile="${project.build.directory}/arthas-spy.jar"
+                                      overwrite="true" failonerror="false" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
