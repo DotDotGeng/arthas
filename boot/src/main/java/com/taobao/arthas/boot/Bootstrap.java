@@ -311,7 +311,7 @@ public class Bootstrap {
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
-        Package bootstrapPackage = Bootstrap.class.getPackage();
+        Package bootstrapPackage = Bootstrap.class.getPackage(); // 从JAR 包中的 MANIFEST.MF 文件的 Implementation-Version 属性获取版本，没有实质的作用
         if (bootstrapPackage != null) {
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
             if (arthasBootVersion != null) {

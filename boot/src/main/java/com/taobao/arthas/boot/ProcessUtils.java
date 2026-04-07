@@ -249,12 +249,14 @@ public class ProcessUtils {
 
         List<String> command = new ArrayList<String>();
         command.add(javaPath.getAbsolutePath());
+        command.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5006");
 
         if (toolsJar != null && toolsJar.exists()) {
             command.add("-Xbootclasspath/a:" + toolsJar.getAbsolutePath());
         }
 
         command.addAll(attachArgs);
+        System.out.println("Starting arthas-core with command: " + String.join(" ", command));
         // "${JAVA_HOME}"/bin/java \
         // ${opts} \
         // -jar "${arthas_lib_dir}/arthas-core.jar" \
